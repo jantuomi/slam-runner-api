@@ -7,8 +7,9 @@ RUN cabal update
 RUN git clone $SLAM_GIT_REPO /slam
 WORKDIR /slam
 RUN git checkout $SLAM_GIT_CHECKOUT
-RUN ls src && cabal build --enable-executable-static
-RUN mv $(cabal list-bin slam-interpreter) ./interpreter
+RUN cabal build --enable-executable-static \
+    && mv $(cabal list-bin slam-interpreter) ./interpreter \
+    && strip ./interpreter
 
 FROM node:16-alpine AS serve
 
