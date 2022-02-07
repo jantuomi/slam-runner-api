@@ -11,13 +11,16 @@ import { cors } from "@tinyhttp/cors"
 const exec = promisify(cb_exec)
 const app = new App()
 
-const PORT = Number(process.env.PORT) || 3000
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000
 console.log(`Serving API on port ${PORT}`)
+
+const TIMEOUT = process.env.TIMEOUT ? Number(process.env.TIMEOUT) : 5000 // ms
+const MAX_SRC_LENGTH = process.env.MAX_SRC_LENGTH ? Number(process.env.MAX_SRC_LENGTH) : 4000 // characters
 
 const interpretFile = async (sourceFile: string) => {
   const cmd = `./interpreter ${sourceFile}`
   try {
-    const result = await exec(cmd)
+    const result = await exec(cmd, { timeout: TIMEOUT, killSignal: "SIGKILL" })
     return result.stdout
   } catch (err) {
     console.error(err)
@@ -33,7 +36,7 @@ app
   .use(json())
   .post(RunnerApi.SubmitRequest.path, async (req, res) => {
     const body: RunnerApi.SubmitRequest.Body | undefined = req.body
-    if (!body || !body.source) {
+    if (!body || !body.source || body.source.length > MAX_SRC_LENGTH) {
       return res.sendStatus(400)
     }
 
