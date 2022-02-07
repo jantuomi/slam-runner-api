@@ -5,7 +5,7 @@ import  { promisify } from "util"
 import { exec as cb_exec } from "child_process"
 import tmp from "tmp"
 import fs from "fs"
-import { RunnerApiSubmitRequest, RunnerApiSubmitResponse } from "slam-types"
+import { RunnerApi } from "slam-types"
 import { cors } from "@tinyhttp/cors"
 
 const exec = promisify(cb_exec)
@@ -31,8 +31,8 @@ app
   }))
   .use(cors())
   .use(json())
-  .post(RunnerApiSubmitRequest.path, async (req, res) => {
-    const body: RunnerApiSubmitRequest.Body | undefined = req.body
+  .post(RunnerApi.SubmitRequest.path, async (req, res) => {
+    const body: RunnerApi.SubmitRequest.Body | undefined = req.body
     if (!body || !body.source) {
       return res.sendStatus(400)
     }
@@ -43,7 +43,7 @@ app
     const result = await interpretFile(sourceFile)
     fs.rmSync(sourceFile)
 
-    const response: RunnerApiSubmitResponse.Body = { result }
+    const response: RunnerApi.SubmitResponse.Body = { result }
     res.send(response)
   })
   .listen(PORT)
