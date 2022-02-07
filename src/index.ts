@@ -6,6 +6,7 @@ import { exec as cb_exec } from "child_process"
 import tmp from "tmp"
 import fs from "fs"
 import { RunnerApiSubmitRequest, RunnerApiSubmitResponse } from "slam-types"
+import { cors } from "@tinyhttp/cors"
 
 const exec = promisify(cb_exec)
 const app = new App()
@@ -28,6 +29,7 @@ app
   .use(logger({
     timestamp: { format: "YYYY-MM-DDTHH:mm:ssZ" },
   }))
+  .use(cors())
   .use(json())
   .post(RunnerApiSubmitRequest.path, async (req, res) => {
     const body: RunnerApiSubmitRequest.Body | undefined = req.body

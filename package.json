@@ -11,10 +11,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "slam-types": "git://github.com/jantuomi/slam-types.git#a401431",
     "@tinyhttp/app": "2.0.16",
+    "@tinyhttp/cors": "2.0.0",
     "@tinyhttp/logger": "1.3.0",
     "milliparsec": "2.2.1",
+    "slam-types": "git://github.com/jantuomi/slam-types.git#a401431",
     "tmp": "0.2.1",
     "tsm": "2.2.1"
   },
