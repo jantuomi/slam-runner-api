@@ -7,6 +7,7 @@ import tmp from "tmp"
 import fs from "fs"
 import { RunnerApi } from "slam-types"
 import { cors } from "@tinyhttp/cors"
+import { hrtime } from "process"
 
 const exec = promisify(cb_exec)
 const app = new App()
@@ -40,13 +41,20 @@ app
       return res.sendStatus(400)
     }
 
+    const apiTimeHandle = hrtime()
     const { name: sourceFile } = tmp.fileSync() as { name: string }
     fs.writeFileSync(sourceFile, body.source)
-
+    const executionTimeHandle = hrtime()
     const result = await interpretFile(sourceFile)
-    fs.rmSync(sourceFile)
+    const executionTime = Math.round(hrtime(executionTimeHandle)[1] / 1000)
+    fs.rm(sourceFile, () => void 0)
+    const apiTime = Math.round(hrtime(apiTimeHandle)[1] / 1000)
 
-    const response: RunnerApi.SubmitResponse.Body = { result }
+    const response: RunnerApi.SubmitResponse.Body = {
+      result,
+      executionTime,
+      apiTime,
+    }
     res.send(response)
   })
   .listen(PORT)
