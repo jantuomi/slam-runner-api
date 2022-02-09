@@ -1,3 +1,4 @@
+import "newrelic"
 import { App } from "@tinyhttp/app"
 import { logger } from "@tinyhttp/logger"
 import { json } from "milliparsec"
@@ -42,7 +43,7 @@ app
     }
 
     const apiTimeHandle = hrtime()
-    const { name: sourceFile } = tmp.fileSync() as { name: string }
+    const { name: sourceFile } = tmp.fileSync(undefined) as { name: string }
     fs.writeFileSync(sourceFile, body.source)
     const executionTimeHandle = hrtime()
     const result = await interpretFile(sourceFile)

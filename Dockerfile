@@ -20,5 +20,6 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --only-prod
 COPY --from=build /slam/interpreter ./
+COPY newrelic.js ./newrelic.js
 COPY src ./src
 CMD ["npm", "start"]

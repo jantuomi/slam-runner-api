@@ -5,8 +5,9 @@ services:
     build: .
     image: eu.gcr.io/slam-lang/slam-runner-api
     environment:
-      PORT: 3000
+      PORT: 4000
+      NEWRELIC_LICENSE_KEY: ${NEWRELIC_LICENSE_KEY}
     ports:
-      - 3000:3000
+      - 4000:4000
     volumes:
       - ./src:/app/src
