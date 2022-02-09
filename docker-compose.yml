@@ -1,8 +1,11 @@
-version: '3'
+version: '3.8'
 
 services:
   api:
-    build: .
+    build:
+      context: .
+      cache_from:
+        - eu.gcr.io/slam-lang/slam-runner-api:latest
     image: eu.gcr.io/slam-lang/slam-runner-api
     environment:
       PORT: 4000

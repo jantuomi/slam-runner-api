@@ -1,0 +1,44 @@
+name: Build and publish Runner API
+on:
+  push:
+    branches:
+      - main
+env:
+  IMAGE: eu.gcr.io/slam-lang/slam-runner-api
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        uses: actions/checkout@v2
+
+      - name: "Compute new image tag"
+        run: |
+          echo "Long commit SHA: ${GITHUB_SHA}"
+          export TAG=$(echo "${GITHUB_SHA}" | head -c 7)
+          echo "TAG: ${TAG}"
+          echo "TAG=${TAG}" >> ${GITHUB_ENV}
+
+      - id: "auth"
+        uses: "google-github-actions/auth@v0"
+        with:
+          credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
+
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v0"
+
+      - name: Build and tag
+        run: |
+          gcloud auth configure-docker --quiet
+          if docker pull "${IMAGE}:latest"; then
+            docker build -t "${IMAGE}:${TAG}" --cache-from="${IMAGE}:latest" .
+          else
+            docker build -t "${IMAGE}:${TAG}" .
+          fi
+          docker tag "${IMAGE}:${TAG}" "${IMAGE}:latest"
+
+      - name: Publish
+        run: |
+          docker push "${IMAGE}:${TAG}"
+          docker push "${IMAGE}:latest"
+          echo "Published ${IMAGE}:${TAG}"
