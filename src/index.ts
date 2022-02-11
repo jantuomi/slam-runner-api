@@ -38,7 +38,7 @@ app
   .use(json())
   .post(RunnerApi.SubmitRequest.path, async (req, res) => {
     const body: RunnerApi.SubmitRequest.Body | undefined = req.body
-    if (!body || !body.source || body.source.length > MAX_SRC_LENGTH) {
+    if (!body || body.source === undefined || body.source.length > MAX_SRC_LENGTH) {
       return res.sendStatus(400)
     }
 
